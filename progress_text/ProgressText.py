@@ -1,3 +1,4 @@
+import time
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,10 +21,12 @@ class ProgressText:
         self.now_iter = -1
         self.max_iter = len(iterable)
         self.iterator = None
+        self.time_start = None
     
     def __iter__(self):
         self.now_iter = 0
         self.iterator = iter(self.iterable)
+        self.time_start = time.time()
         return self
 
     def __next__(self):
@@ -34,12 +37,20 @@ class ProgressText:
                 current_offset = i - 1
                 if not self.progress_printed[current_offset]:
                     self.progress_printed[current_offset] = True
-                    logger.info("Task [{}] {}% ({}/{}) finished."\
-                        .format(self.task_name, current_offset * self.every_percent,
-                                self.now_iter, len(self.iterable)))
+                    time_elapsed = time.time() - self.time_start
+                    logger.info("Task [{}] {}% ({}/{}) finished.\n"
+                                "\t Elapsed time [{}]. Estimated time to finish [{}]."\
+                                    .format(self.task_name, current_offset * self.every_percent,
+                                            self.now_iter, len(self.iterable),
+                                            time.strftime("%H:%M:%S", time.gmtime(time_elapsed)),
+                                            "inf" if self.now_iter == 0 else time.strftime("%H:%M:%S", time.gmtime(time_elapsed * (self.max_iter - self.now_iter) / self.now_iter))))
                 break
             self.now_iter += 1
             return next(self.iterator)
         else:
-            logger.info("100% ({}/{}) finished.".format(self.now_iter, len(self.iterable)))
+            time_elapsed = time.time() - self.time_start
+            logger.info("Task [{}] 100% ({}/{}) finished.\n"
+                        "\t Elapsed time [{}]."\
+                            .format(self.task_name, self.now_iter, len(self.iterable),
+                                    time.strftime("%H:%M:%S", time.gmtime(time_elapsed))))
             raise StopIteration

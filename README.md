@@ -1,6 +1,6 @@
 # progress-text
 
-Python script for printing progress in text.
+Python package for printing progress in text.
 
 ## Why not [tqdm](https://github.com/tqdm/tqdm)
 
@@ -12,21 +12,12 @@ Python script for printing progress in text.
 pip3 install --upgrade progress-text
 ```
 
+Or simply copy the source code.
+
 ## Usage
 
-```python
-from progress_text import ProgressText
+See [`example.py`](./example.py).
 
-for i in ProgressText(range(7)):
-    pass
+## To do
 
-for i in ProgressText(range(50)):
-    pass
-
-for i in ProgressText(range(1000), every_percent=20):
-    pass
-
-for i in ProgressText([1,3,5,7,9,11]):
-    pass
-```
-
+None
