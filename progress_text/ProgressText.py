@@ -9,11 +9,12 @@ logger.addHandler(file_handler)
 
 class ProgressText:
     
-    def __init__(self, iterable=None, every_percent=10):
+    def __init__(self, iterable=None, every_percent=10, task_name="unnamed"):
         assert iterable is not None
         assert every_percent > 0 and every_percent < 100
         self.iterable = iterable
         self.every_percent = every_percent
+        self.task_name = task_name
         self.progress_printed = [False for _ in range(int(100 / every_percent))]
         self.update_every_iter = int(len(iterable) * every_percent / 100) + 1
         self.now_iter = -1
@@ -33,7 +34,9 @@ class ProgressText:
                 current_offset = i - 1
                 if not self.progress_printed[current_offset]:
                     self.progress_printed[current_offset] = True
-                    logger.info("{}% ({}/{}) finished.".format(current_offset * self.every_percent, self.now_iter, len(self.iterable)))
+                    logger.info("Task [{}] {}% ({}/{}) finished."\
+                        .format(self.task_name, current_offset * self.every_percent,
+                                self.now_iter, len(self.iterable)))
                 break
             self.now_iter += 1
             return next(self.iterator)
