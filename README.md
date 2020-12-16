@@ -12,6 +12,12 @@ Python package for printing progress in text.
 pip3 install --upgrade progress-text
 ```
 
+Or clone the project and
+
+```shell
+python setup.py install
+```
+
 Or simply copy the source code.
 
 ## Usage
