@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="progress-text", # Replace with your own package name
-    version="0.0.2",
+    version="0.0.3",
     author="Linjian Li",
     author_email="author@example.com",
     description="Python package for printing progress in text.",
