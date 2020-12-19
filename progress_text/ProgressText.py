@@ -17,39 +17,37 @@ class ProgressText:
         self.iterable = iterable
         self.every_percent = every_percent
         self.task_name = task_name
-        self.progress_printed = [False for _ in range(int(100 / every_percent))]
-        self.update_every_iter = int(len(iterable) * every_percent / 100) + 1
         self.now_iter = -1
         self.max_iter = len(iterable)
         self.iterator = None
         self.time_start = None
+        self.milestones = [self.max_iter * i * self.every_percent / 100 for i in range(int(100 / every_percent))]
+        self.next_milestone_offset = -1
+
     
     def __iter__(self):
         self.now_iter = 0
+        self.next_milestone_offset = 0
         self.iterator = iter(self.iterable)
         self.time_start = time.time()
         return self
 
     def __next__(self):
-        if self.now_iter < len(self.iterable):
-            for i in range(len(self.progress_printed)):
-                if self.now_iter >= self.max_iter * i * self.every_percent / 100:
-                    continue
-                current_offset = i - 1
-                if not self.progress_printed[current_offset]:
-                    self.progress_printed[current_offset] = True
-                    time_elapsed = time.time() - self.time_start
-                    logger.info("Task [{}] {}% ({}/{}) finished.\tTime [Elapsed < Remain] [{} < {}]"\
-                                    .format(self.task_name, current_offset * self.every_percent,
-                                            self.now_iter, len(self.iterable),
-                                            time.strftime("%H:%M:%S", time.gmtime(time_elapsed)),
-                                            "?" if self.now_iter == 0 else time.strftime("%H:%M:%S", time.gmtime(time_elapsed * (self.max_iter - self.now_iter) / self.now_iter))))
-                break
+        if self.now_iter < self.max_iter:
+            if self.now_iter >= self.milestones[self.next_milestone_offset]:
+                time_elapsed = time.time() - self.time_start
+                logger.info("Task [{}] {}% ({}/{}) finished.\tTime [Elapsed < Remain] [{} < {}]"\
+                                .format(self.task_name, next_milestone_offset * self.every_percent,
+                                        self.now_iter, self.max_iter,
+                                        time.strftime("%H:%M:%S", time.gmtime(time_elapsed)),
+                                        "?" if self.now_iter == 0 else time.strftime("%H:%M:%S", time.gmtime(time_elapsed * (self.max_iter - self.now_iter) / self.now_iter))))
+
+                self.next_milestone_offset += 1
             self.now_iter += 1
             return next(self.iterator)
         else:
             time_elapsed = time.time() - self.time_start
             logger.info("Task [{}] 100% ({}/{}) finished.\tTime [Elapsed] [{}]"\
-                            .format(self.task_name, self.now_iter, len(self.iterable),
+                            .format(self.task_name, self.now_iter, self.max_iter,
                                     time.strftime("%H:%M:%S", time.gmtime(time_elapsed))))
             raise StopIteration

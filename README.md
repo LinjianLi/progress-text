@@ -36,6 +36,10 @@ Or simply copy the source code.
 
 See [`example.py`](./example.py).
 
+## Performance
+
+The overhead is about 3 times as `tqdm`. See [`./tests/test_overhead`](./tests/test_overhead).
+
 ## To do
 
 None
