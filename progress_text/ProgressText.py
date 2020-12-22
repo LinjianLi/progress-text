@@ -23,6 +23,7 @@ class ProgressText:
         self.iterator = None
         self.time_start = None
         self.milestones = [self.max_iter * i * self.every_percent / 100 for i in range(int(100 / every_percent))]
+        self.milestones.append(self.max_iter) # Add a milestone for 100%.
         self.next_milestone_offset = -1
 
     def __iter__(self):
